@@ -34,13 +34,13 @@ public class ToolSessionSettingsProvider implements ISessionSettingsProvider, Fe
 	private ConfigurationResource configuration;
 
 	@Autowired
-	private CompanyResource companyResource;
+	protected CompanyResource companyResource;
 
 	@Autowired
 	private ObjectMapperTrim objectMapper;
 
 	@Autowired
-	private NodeResource nodeResource;
+	protected NodeResource nodeResource;
 
 	private static final TypeReference<List<Map<String, Object>>> LIST_MAP_TYPE = new TypeReference<List<Map<String, Object>>>() {
 		// Nothing to do
@@ -79,6 +79,6 @@ public class ToolSessionSettingsProvider implements ISessionSettingsProvider, Fe
 
 	@Override
 	public String getKey() {
-		return "geature:menu:node";
+		return "feature:menu:node";
 	}
 }

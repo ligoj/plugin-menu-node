@@ -3,6 +3,7 @@ package org.ligoj.app.plugin.menu.node;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,10 +17,8 @@ import org.junit.runner.RunWith;
 import org.ligoj.app.AbstractAppTest;
 import org.ligoj.app.api.NodeVo;
 import org.ligoj.app.model.Node;
-import org.ligoj.app.model.Parameter;
-import org.ligoj.app.model.ParameterValue;
-import org.ligoj.app.model.Project;
-import org.ligoj.app.model.Subscription;
+import org.ligoj.app.plugin.id.resource.CompanyResource;
+import org.ligoj.app.resource.node.NodeResource;
 import org.ligoj.bootstrap.core.SpringUtils;
 import org.ligoj.bootstrap.model.system.SystemConfiguration;
 import org.ligoj.bootstrap.resource.system.configuration.ConfigurationResource;
@@ -47,9 +46,7 @@ public class ToolSessionSettingsProviderTest extends AbstractAppTest {
 	@Before
 	public void prepareData() throws IOException {
 		// Only with Spring context
-		persistEntities("csv",
-				new Class[] { SystemConfiguration.class, Node.class, Parameter.class, Project.class, Subscription.class, ParameterValue.class },
-				StandardCharsets.UTF_8.name());
+		persistEntities("csv", new Class[] { SystemConfiguration.class, Node.class }, StandardCharsets.UTF_8.name());
 		CacheManager.getInstance().getCache("configuration").removeAll();
 
 		// For the cache to be created
@@ -65,7 +62,8 @@ public class ToolSessionSettingsProviderTest extends AbstractAppTest {
 	@SuppressWarnings("unchecked")
 	@Before
 	public void mockApplicationContext() {
-		final ApplicationContext applicationContext = Mockito.mock(ApplicationContext.class, AdditionalAnswers.delegatesTo(super.applicationContext));
+		final ApplicationContext applicationContext = Mockito.mock(ApplicationContext.class,
+				AdditionalAnswers.delegatesTo(super.applicationContext));
 		SpringUtils.setSharedApplicationContext(applicationContext);
 		Mockito.doAnswer(invocation -> {
 			final Class<?> requiredType = (Class<Object>) invocation.getArguments()[0];
@@ -81,16 +79,21 @@ public class ToolSessionSettingsProviderTest extends AbstractAppTest {
 		initSpringSecurityContext("fdaugan");
 		final SessionSettings details = new SessionSettings();
 		details.setUserSettings(new HashMap<>());
+		final ToolSessionSettingsProvider provider = new ToolSessionSettingsProvider();
+		applicationContext.getAutowireCapableBeanFactory().autowireBean(provider);
+		provider.companyResource = Mockito.mock(CompanyResource.class);
+		provider.nodeResource = Mockito.mock(NodeResource.class);
+		final NodeVo node = new NodeVo();
+		node.setId("service:km:confluence:dig");
+		Mockito.when(provider.nodeResource.findAll())
+				.thenReturn(Collections.singletonMap("service:km:confluence:dig", node));
+		Mockito.when(provider.companyResource.isUserInternalCommpany()).thenReturn(true);
 		provider.decorate(details);
 		Assert.assertEquals(Boolean.TRUE, details.getUserSettings().get("internal"));
 		@SuppressWarnings({ "unchecked", "rawtypes" })
 		final List<Map<String, Object>> globalTools = (List) details.getUserSettings().get("globalTools");
 		Assert.assertEquals(1, globalTools.size());
-		final NodeVo node = (NodeVo) globalTools.get(0).get("node");
-		Assert.assertEquals("service:km:confluence:dig", node.getId());
-		Assert.assertEquals("Confluence Corporate", node.getName());
-		Assert.assertEquals(3, node.getParameters().size());
-		Assert.assertEquals("http://localhost:8120", node.getParameters().get("service:km:confluence:url"));
+		Assert.assertEquals("service:km:confluence:dig", ((NodeVo) globalTools.get(0).get("node")).getId());
 	}
 
 	/**
@@ -114,9 +117,18 @@ public class ToolSessionSettingsProviderTest extends AbstractAppTest {
 		initSpringSecurityContext("wuser");
 		final SessionSettings details = new SessionSettings();
 		details.setUserSettings(new HashMap<>());
+		final ToolSessionSettingsProvider provider = new ToolSessionSettingsProvider();
+		applicationContext.getAutowireCapableBeanFactory().autowireBean(provider);
+		provider.companyResource = Mockito.mock(CompanyResource.class);
+		Mockito.when(provider.companyResource.isUserInternalCommpany()).thenReturn(false);
 		provider.decorate(details);
 		Assert.assertEquals(Boolean.TRUE, details.getUserSettings().get("external"));
 		Assert.assertTrue(((Collection) details.getUserSettings().get("globalTools")).isEmpty());
+	}
+
+	@Test
+	public void getKey() {
+		Assert.assertEquals("feature:menu:node", provider.getKey());
 	}
 
 }
