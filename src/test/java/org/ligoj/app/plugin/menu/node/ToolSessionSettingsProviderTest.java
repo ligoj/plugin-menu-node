@@ -131,4 +131,8 @@ public class ToolSessionSettingsProviderTest extends AbstractAppTest {
 		Assert.assertEquals("feature:menu:node", provider.getKey());
 	}
 
+	@Test
+	public void getInstalledEntities() {
+		Assert.assertTrue(provider.getInstalledEntities().contains(SystemConfiguration.class));
+	}
 }

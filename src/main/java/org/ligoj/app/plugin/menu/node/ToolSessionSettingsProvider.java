@@ -1,6 +1,7 @@
 package org.ligoj.app.plugin.menu.node;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -12,6 +13,7 @@ import org.ligoj.app.api.FeaturePlugin;
 import org.ligoj.app.plugin.id.resource.CompanyResource;
 import org.ligoj.app.resource.node.NodeResource;
 import org.ligoj.bootstrap.core.json.ObjectMapperTrim;
+import org.ligoj.bootstrap.model.system.SystemConfiguration;
 import org.ligoj.bootstrap.resource.system.configuration.ConfigurationResource;
 import org.ligoj.bootstrap.resource.system.session.ISessionSettingsProvider;
 import org.ligoj.bootstrap.resource.system.session.SessionSettings;
@@ -80,5 +82,10 @@ public class ToolSessionSettingsProvider implements ISessionSettingsProvider, Fe
 	@Override
 	public String getKey() {
 		return "feature:menu:node";
+	}
+
+	@Override
+	public List<Class<?>> getInstalledEntities() {
+		return Collections.singletonList(SystemConfiguration.class);
 	}
 }
