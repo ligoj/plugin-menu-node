@@ -15,6 +15,12 @@
 	<name>Ligoj - Plugin Menu Node</name>
 	<description>Node based menu content</description>
 
+	<scm>
+		<connection>scm:git:https://github.com/ligoj/plugin-menu-node</connection>
+		<developerConnection>scm:git:https://github.com/ligoj/plugin-menu-node</developerConnection>
+		<url>https://github.com/ligoj/plugin-menu-node.git</url>
+	</scm>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.ligoj.plugin</groupId>
