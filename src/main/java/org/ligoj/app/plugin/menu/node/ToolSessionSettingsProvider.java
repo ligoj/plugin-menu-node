@@ -44,7 +44,7 @@ public class ToolSessionSettingsProvider implements ISessionSettingsProvider, Fe
 	@Autowired
 	protected NodeResource nodeResource;
 
-	private static final TypeReference<List<Map<String, Object>>> LIST_MAP_TYPE = new TypeReference<List<Map<String, Object>>>() {
+	private static final TypeReference<List<Map<String, Object>>> LIST_MAP_TYPE = new TypeReference<>() {
 		// Nothing to do
 	};
 

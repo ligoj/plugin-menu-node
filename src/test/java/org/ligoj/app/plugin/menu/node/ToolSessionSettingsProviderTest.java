@@ -10,10 +10,10 @@ import java.util.Map;
 
 import javax.transaction.Transactional;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.ligoj.app.AbstractAppTest;
 import org.ligoj.app.api.NodeVo;
 import org.ligoj.app.model.Node;
@@ -30,20 +30,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import net.sf.ehcache.CacheManager;
 
 /**
  * Test of {@link ToolSessionSettingsProvider}
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = "classpath:/META-INF/spring/application-context-test.xml")
 @Transactional
 @Rollback
 public class ToolSessionSettingsProviderTest extends AbstractAppTest {
 
-	@Before
+	@BeforeEach
 	public void prepareData() throws IOException {
 		// Only with Spring context
 		persistEntities("csv", new Class[] { SystemConfiguration.class, Node.class }, StandardCharsets.UTF_8.name());
@@ -60,7 +60,7 @@ public class ToolSessionSettingsProviderTest extends AbstractAppTest {
 	private ConfigurationResource configuration;
 
 	@SuppressWarnings("unchecked")
-	@Before
+	@BeforeEach
 	public void mockApplicationContext() {
 		final ApplicationContext applicationContext = Mockito.mock(ApplicationContext.class,
 				AdditionalAnswers.delegatesTo(super.applicationContext));
@@ -89,11 +89,11 @@ public class ToolSessionSettingsProviderTest extends AbstractAppTest {
 				.thenReturn(Collections.singletonMap("service:km:confluence:dig", node));
 		Mockito.when(provider.companyResource.isUserInternalCommpany()).thenReturn(true);
 		provider.decorate(details);
-		Assert.assertEquals(Boolean.TRUE, details.getUserSettings().get("internal"));
+		Assertions.assertEquals(Boolean.TRUE, details.getUserSettings().get("internal"));
 		@SuppressWarnings({ "unchecked", "rawtypes" })
 		final List<Map<String, Object>> globalTools = (List) details.getUserSettings().get("globalTools");
-		Assert.assertEquals(1, globalTools.size());
-		Assert.assertEquals("service:km:confluence:dig", ((NodeVo) globalTools.get(0).get("node")).getId());
+		Assertions.assertEquals(1, globalTools.size());
+		Assertions.assertEquals("service:km:confluence:dig", ((NodeVo) globalTools.get(0).get("node")).getId());
 	}
 
 	/**
@@ -108,7 +108,7 @@ public class ToolSessionSettingsProviderTest extends AbstractAppTest {
 		applicationContext.getAutowireCapableBeanFactory().autowireBean(resource);
 		configuration.saveOrUpdate("global.tools.internal", "{error}");
 		resource.decorate(details);
-		Assert.assertNull(details.getUserSettings().get("globalTools"));
+		Assertions.assertNull(details.getUserSettings().get("globalTools"));
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -122,17 +122,17 @@ public class ToolSessionSettingsProviderTest extends AbstractAppTest {
 		provider.companyResource = Mockito.mock(CompanyResource.class);
 		Mockito.when(provider.companyResource.isUserInternalCommpany()).thenReturn(false);
 		provider.decorate(details);
-		Assert.assertEquals(Boolean.TRUE, details.getUserSettings().get("external"));
-		Assert.assertTrue(((Collection) details.getUserSettings().get("globalTools")).isEmpty());
+		Assertions.assertEquals(Boolean.TRUE, details.getUserSettings().get("external"));
+		Assertions.assertTrue(((Collection) details.getUserSettings().get("globalTools")).isEmpty());
 	}
 
 	@Test
 	public void getKey() {
-		Assert.assertEquals("feature:menu:node", provider.getKey());
+		Assertions.assertEquals("feature:menu:node", provider.getKey());
 	}
 
 	@Test
 	public void getInstalledEntities() {
-		Assert.assertTrue(provider.getInstalledEntities().contains(SystemConfiguration.class));
+		Assertions.assertTrue(provider.getInstalledEntities().contains(SystemConfiguration.class));
 	}
 }
