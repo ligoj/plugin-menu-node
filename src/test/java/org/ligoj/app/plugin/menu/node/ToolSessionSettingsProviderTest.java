@@ -32,8 +32,6 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import net.sf.ehcache.CacheManager;
-
 /**
  * Test of {@link ToolSessionSettingsProvider}
  */
@@ -47,7 +45,7 @@ public class ToolSessionSettingsProviderTest extends AbstractAppTest {
 	public void prepareData() throws IOException {
 		// Only with Spring context
 		persistEntities("csv", new Class[] { SystemConfiguration.class, Node.class }, StandardCharsets.UTF_8.name());
-		CacheManager.getInstance().getCache("configuration").removeAll();
+		cacheManager.getCache("configuration").clear();
 
 		// For the cache to be created
 		getUser().findAll();
