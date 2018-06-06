@@ -104,7 +104,7 @@ public class ToolSessionSettingsProviderTest extends AbstractAppTest {
 		details.setUserSettings(new HashMap<>());
 		final ToolSessionSettingsProvider resource = new ToolSessionSettingsProvider();
 		applicationContext.getAutowireCapableBeanFactory().autowireBean(resource);
-		configuration.saveOrUpdate("global.tools.internal", "{error}");
+		configuration.put("global.tools.internal", "{error}");
 		resource.decorate(details);
 		Assertions.assertNull(details.getUserSettings().get("globalTools"));
 	}
