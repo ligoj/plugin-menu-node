@@ -9,10 +9,10 @@ import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
-import org.ligoj.app.api.FeaturePlugin;
 import org.ligoj.app.plugin.id.resource.CompanyResource;
 import org.ligoj.app.resource.node.NodeResource;
 import org.ligoj.bootstrap.core.json.ObjectMapperTrim;
+import org.ligoj.bootstrap.core.plugin.FeaturePlugin;
 import org.ligoj.bootstrap.model.system.SystemConfiguration;
 import org.ligoj.bootstrap.resource.system.configuration.ConfigurationResource;
 import org.ligoj.bootstrap.resource.system.session.ISessionSettingsProvider;
