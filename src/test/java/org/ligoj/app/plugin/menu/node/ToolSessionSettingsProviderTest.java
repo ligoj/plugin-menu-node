@@ -39,10 +39,10 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ContextConfiguration(locations = "classpath:/META-INF/spring/application-context-test.xml")
 @Transactional
 @Rollback
-public class ToolSessionSettingsProviderTest extends AbstractAppTest {
+class ToolSessionSettingsProviderTest extends AbstractAppTest {
 
 	@BeforeEach
-	public void prepareData() throws IOException {
+	void prepareData() throws IOException {
 		// Only with Spring context
 		persistEntities("csv", new Class[] { SystemConfiguration.class, Node.class }, StandardCharsets.UTF_8.name());
 		cacheManager.getCache("configuration").clear();
@@ -59,7 +59,7 @@ public class ToolSessionSettingsProviderTest extends AbstractAppTest {
 
 	@SuppressWarnings("unchecked")
 	@BeforeEach
-	public void mockApplicationContext() {
+	void mockApplicationContext() {
 		final ApplicationContext applicationContext = Mockito.mock(ApplicationContext.class,
 				AdditionalAnswers.delegatesTo(super.applicationContext));
 		SpringUtils.setSharedApplicationContext(applicationContext);
@@ -73,7 +73,7 @@ public class ToolSessionSettingsProviderTest extends AbstractAppTest {
 	}
 
 	@Test
-	public void decorate() {
+	void decorate() {
 		initSpringSecurityContext("fdaugan");
 		final SessionSettings details = new SessionSettings();
 		details.setUserSettings(new HashMap<>());
@@ -98,7 +98,7 @@ public class ToolSessionSettingsProviderTest extends AbstractAppTest {
 	 * Invalid JSon in tool configuration.
 	 */
 	@Test
-	public void decorateError() {
+	void decorateError() {
 		initSpringSecurityContext("fdaugan");
 		final SessionSettings details = new SessionSettings();
 		details.setUserSettings(new HashMap<>());
@@ -111,7 +111,7 @@ public class ToolSessionSettingsProviderTest extends AbstractAppTest {
 
 	@SuppressWarnings("rawtypes")
 	@Test
-	public void decorateExternal() {
+	void decorateExternal() {
 		initSpringSecurityContext("wuser");
 		final SessionSettings details = new SessionSettings();
 		details.setUserSettings(new HashMap<>());
@@ -125,12 +125,12 @@ public class ToolSessionSettingsProviderTest extends AbstractAppTest {
 	}
 
 	@Test
-	public void getKey() {
+	void getKey() {
 		Assertions.assertEquals("feature:menu:node", provider.getKey());
 	}
 
 	@Test
-	public void getInstalledEntities() {
+	void getInstalledEntities() {
 		Assertions.assertTrue(provider.getInstalledEntities().contains(SystemConfiguration.class));
 	}
 }
