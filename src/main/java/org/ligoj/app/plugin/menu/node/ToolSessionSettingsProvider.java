@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
@@ -50,7 +49,7 @@ public class ToolSessionSettingsProvider implements ISessionSettingsProvider, Fe
 
 	@Override
 	public void decorate(final SessionSettings settings) {
-		final Map<String, Object> userSetting = settings.getUserSettings();
+		final var userSetting = settings.getUserSettings();
 
 		// Add the related one to the type of user
 		final String source;
@@ -66,14 +65,14 @@ public class ToolSessionSettingsProvider implements ISessionSettingsProvider, Fe
 
 		// Fetch the required node data
 		try {
-			final List<Map<String, Object>> rawGlobalTools = objectMapper.readValue(StringUtils.defaultIfEmpty(source, "[]"), LIST_MAP_TYPE);
+			final var rawGlobalTools = objectMapper.readValue(StringUtils.defaultIfEmpty(source, "[]"), LIST_MAP_TYPE);
 			// Replace the node identifier by a Node instance
 			userSetting.put("globalTools", rawGlobalTools.stream().map(globalTool -> {
 				// When the node does not exist anymore, the configuration is not returned
 				globalTool.compute("node", (node, v) -> nodeResource.findAll().get(globalTool.get("id")));
 				globalTool.remove("id");
 				return globalTool;
-			}).filter(globalTool -> globalTool.containsKey("node")).collect(Collectors.toList()));
+			}).filter(globalTool -> globalTool.containsKey("node")).toList());
 		} catch (final IOException ioe) {
 			log.error("Unable to write the global tools configuration for user {}", settings.getUserName(), ioe);
 		}
