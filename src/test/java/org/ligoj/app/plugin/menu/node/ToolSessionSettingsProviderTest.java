@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,6 +19,7 @@ import org.ligoj.app.api.NodeVo;
 import org.ligoj.app.model.Node;
 import org.ligoj.app.plugin.id.resource.CompanyResource;
 import org.ligoj.app.resource.node.NodeResource;
+import org.ligoj.bootstrap.core.INamableBean;
 import org.ligoj.bootstrap.core.SpringUtils;
 import org.ligoj.bootstrap.model.system.SystemConfiguration;
 import org.ligoj.bootstrap.resource.system.configuration.ConfigurationResource;
@@ -75,23 +76,23 @@ class ToolSessionSettingsProviderTest extends AbstractAppTest {
 	@Test
 	void decorate() {
 		initSpringSecurityContext("fdaugan");
-		final SessionSettings details = new SessionSettings();
+		final var details = new SessionSettings();
 		details.setUserSettings(new HashMap<>());
-		final ToolSessionSettingsProvider provider = new ToolSessionSettingsProvider();
+		final var provider = new ToolSessionSettingsProvider();
 		applicationContext.getAutowireCapableBeanFactory().autowireBean(provider);
 		provider.companyResource = Mockito.mock(CompanyResource.class);
 		provider.nodeResource = Mockito.mock(NodeResource.class);
-		final NodeVo node = new NodeVo();
+		final var node = new NodeVo();
 		node.setId("service:km:confluence:dig");
 		Mockito.when(provider.nodeResource.findAll())
 				.thenReturn(Collections.singletonMap("service:km:confluence:dig", node));
-		Mockito.when(provider.companyResource.isUserInternalCommpany()).thenReturn(true);
+		Mockito.when(provider.companyResource.isUserInternalCompany()).thenReturn(true);
 		provider.decorate(details);
 		Assertions.assertEquals(Boolean.TRUE, details.getUserSettings().get("internal"));
 		@SuppressWarnings({ "unchecked", "rawtypes" })
 		final List<Map<String, Object>> globalTools = (List) details.getUserSettings().get("globalTools");
 		Assertions.assertEquals(1, globalTools.size());
-		Assertions.assertEquals("service:km:confluence:dig", ((NodeVo) globalTools.get(0).get("node")).getId());
+		Assertions.assertEquals("service:km:confluence:dig", ((INamableBean<?>) globalTools.get(0).get("node")).getId());
 	}
 
 	/**
@@ -100,9 +101,9 @@ class ToolSessionSettingsProviderTest extends AbstractAppTest {
 	@Test
 	void decorateError() {
 		initSpringSecurityContext("fdaugan");
-		final SessionSettings details = new SessionSettings();
+		final var details = new SessionSettings();
 		details.setUserSettings(new HashMap<>());
-		final ToolSessionSettingsProvider resource = new ToolSessionSettingsProvider();
+		final var resource = new ToolSessionSettingsProvider();
 		applicationContext.getAutowireCapableBeanFactory().autowireBean(resource);
 		configuration.put("global.tools.internal", "{error}");
 		resource.decorate(details);
@@ -113,12 +114,12 @@ class ToolSessionSettingsProviderTest extends AbstractAppTest {
 	@Test
 	void decorateExternal() {
 		initSpringSecurityContext("wuser");
-		final SessionSettings details = new SessionSettings();
+		final var details = new SessionSettings();
 		details.setUserSettings(new HashMap<>());
-		final ToolSessionSettingsProvider provider = new ToolSessionSettingsProvider();
+		final var provider = new ToolSessionSettingsProvider();
 		applicationContext.getAutowireCapableBeanFactory().autowireBean(provider);
 		provider.companyResource = Mockito.mock(CompanyResource.class);
-		Mockito.when(provider.companyResource.isUserInternalCommpany()).thenReturn(false);
+		Mockito.when(provider.companyResource.isUserInternalCompany()).thenReturn(false);
 		provider.decorate(details);
 		Assertions.assertEquals(Boolean.TRUE, details.getUserSettings().get("external"));
 		Assertions.assertTrue(((Collection) details.getUserSettings().get("globalTools")).isEmpty());

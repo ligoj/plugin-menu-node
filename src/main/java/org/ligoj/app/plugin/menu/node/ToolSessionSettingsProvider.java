@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.ligoj.app.plugin.id.resource.CompanyResource;
@@ -53,7 +53,7 @@ public class ToolSessionSettingsProvider implements ISessionSettingsProvider, Fe
 
 		// Add the related one to the type of user
 		final String source;
-		if (companyResource.isUserInternalCommpany()) {
+		if (companyResource.isUserInternalCompany()) {
 			// Internal user
 			userSetting.put("internal", Boolean.TRUE);
 			source = configuration.get("global.tools.internal");
@@ -67,11 +67,10 @@ public class ToolSessionSettingsProvider implements ISessionSettingsProvider, Fe
 		try {
 			final var rawGlobalTools = objectMapper.readValue(StringUtils.defaultIfEmpty(source, "[]"), LIST_MAP_TYPE);
 			// Replace the node identifier by a Node instance
-			userSetting.put("globalTools", rawGlobalTools.stream().map(globalTool -> {
+			userSetting.put("globalTools", rawGlobalTools.stream().peek(globalTool -> {
 				// When the node does not exist anymore, the configuration is not returned
 				globalTool.compute("node", (node, v) -> nodeResource.findAll().get(globalTool.get("id")));
 				globalTool.remove("id");
-				return globalTool;
 			}).filter(globalTool -> globalTool.containsKey("node")).toList());
 		} catch (final IOException ioe) {
 			log.error("Unable to write the global tools configuration for user {}", settings.getUserName(), ioe);
