@@ -45,7 +45,7 @@ class ToolSessionSettingsProviderTest extends AbstractAppTest {
 	@BeforeEach
 	void prepareData() throws IOException {
 		// Only with Spring context
-		persistEntities("csv", new Class[] { SystemConfiguration.class, Node.class }, StandardCharsets.UTF_8.name());
+		persistEntities("csv", new Class<?>[] { SystemConfiguration.class, Node.class }, StandardCharsets.UTF_8);
 		cacheManager.getCache("configuration").clear();
 
 		// For the cache to be created
