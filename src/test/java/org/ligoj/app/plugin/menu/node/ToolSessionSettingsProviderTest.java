@@ -92,7 +92,7 @@ class ToolSessionSettingsProviderTest extends AbstractAppTest {
 		@SuppressWarnings({ "unchecked", "rawtypes" })
 		final List<Map<String, Object>> globalTools = (List) details.getUserSettings().get("globalTools");
 		Assertions.assertEquals(1, globalTools.size());
-		Assertions.assertEquals("service:km:confluence:dig", ((INamableBean<?>) globalTools.get(0).get("node")).getId());
+		Assertions.assertEquals("service:km:confluence:dig", ((INamableBean<?>) globalTools.getFirst().get("node")).getId());
 	}
 
 	/**
