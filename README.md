@@ -7,3 +7,5 @@
 [![License](http://img.shields.io/:license-mit-blue.svg)](http://fabdouglas.mit-license.org/)
 
 [Ligoj](https://github.com/ligoj/ligoj) Menu Node is a simple feature able to expose some links (UI level) depending on enabled node and only for some users.
+
+This plugin support internal and external users display conditions.
