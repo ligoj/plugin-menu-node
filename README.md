@@ -9,3 +9,7 @@
 [Ligoj](https://github.com/ligoj/ligoj) Menu Node is a simple feature able to expose some links (UI level) depending on enabled node and only for some users.
 
 This plugin support internal and external users display conditions.
+
+# DEPERACTION NOTICE
+
+This plugin has been integrated into ligoj/plugin-id and is no more needed
