@@ -10,6 +10,6 @@
 
 This plugin support internal and external users display conditions.
 
-# DEPERACTION NOTICE
+# DEPRECATION NOTICE
 
 This plugin has been integrated into ligoj/plugin-id and is no more needed
